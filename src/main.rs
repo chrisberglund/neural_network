@@ -17,7 +17,7 @@ fn multiply_matrix(a: &[f64], b: &[f64]) -> Vec<f64> {
     let mut product: Vec<f64> = Vec::new();
     for i in 0..a.len()/b.len() {
         let start = i * b.len();
-        let end = i * b.len() + b.len();
+        let end = start + b.len();
         product.push(dot_product(&a[start..end], &b));
     }
     product
