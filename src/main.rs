@@ -35,9 +35,9 @@ fn evaluate_layer(weights: &[f64], inputs: &[f64]) -> Vec<f64> {
 fn loss_function(y: &[f64], sigma: &[f64]) -> f64 {
     let mut sum=0.0;
     for i in 0..sigma.len() {
-        sum += (y[i] - sigma[i]).pow(2);
+        sum += (y[i] - sigma[i]).powf(2.0);
     }
-    sum / sigma.len()
+    sum / sigma.len() as f64
 }
 
 fn main() {
