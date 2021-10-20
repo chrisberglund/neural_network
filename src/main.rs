@@ -23,20 +23,29 @@ fn multiply_matrix(a: &[f64], b: &[f64]) -> Vec<f64> {
     product
 }
 
-fn evaluate_layer(weights: &[f64], inputs: &[f64]) -> f64 {
-    let mut product :f64 = 0.0;
-    for i in 0..inputs.len() {
-        product += weights[i] * inputs[i];
+fn evaluate_layer(weights: &[f64], inputs: &[f64]) -> Vec<f64> {
+    let mut output: Vec<f64> = Vec::new();
+    let product = multiply_matrix(weights, inputs);
+    for i in 0..product.len() {
+        output.push(sigmoid(product[i]));
     }
-    sigmoid(product)
+    output
+}
+
+fn loss_function(y: &[f64], sigma: &[f64]) -> f64 {
+    let mut sum=0.0;
+    for i in 0..sigma.len() {
+        sum += (y[i] - sigma[i]).pow(2);
+    }
+    sum / sigma.len()
 }
 
 fn main() {
     let weights = vec![0.5, 0.5, 0.5,0.3, 0.3, 0.3];
     let inputs = vec![0.5, 0.5, 0.5];
-    let product = multiply_matrix(&weights, &inputs);
-    for i in 0..product.len() {
-        println!("{}", &product[i].to_string());
+    let output = evaluate_layer(&weights, &inputs);
+    for i in 0..output.len() {
+        println!("{}", &output[i].to_string());
     }
 
 }
