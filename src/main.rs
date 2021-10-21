@@ -4,6 +4,28 @@ fn sigmoid(x: f64) -> f64 { 1. / (1. + ((-1. * x).exp())) }
 #[inline]
 fn sigmoid_prime(x: f64) -> f64 { sigmoid(x) * (1. - sigmoid(x)) }
 
+pub struct Matrix<T> {
+    data: Vec<T>,
+    cols: usize,
+    rows: usize,
+}
+
+impl<T: Clone> Matrix<T> {
+    fn cols(&self) -> usize { self.cols }
+
+    fn rows(&self) -> usize { self.rows }
+
+    fn transpose(&self) -> Vec<T> {
+        let mut transpose: Vec<T> = Vec::new();
+        for i in 0 .. self.cols{
+            for j in 0 .. self.rows {
+                transpose.push(self.data[j * self.cols + i].clone());
+            }
+        }
+        transpose
+    }
+}
+
 fn dot(a: &[f64], b: &[f64]) -> f64 {
     let mut product :f64 = 0.0;
     for i in 0..a.len() {
@@ -49,13 +71,16 @@ fn loss_function(y: &[f64], sigma: &[f64]) -> f64 {
 }
 
 fn main() {
-    let weights = vec![0.5, 0.5, 0.5,0.3, 0.3, 0.3];
-    let inputs = vec![0.5, 0.5, 0.5];
-    let y = 0.25;
-    let z = 0.5;
-    let output = output_error(y, &inputs, z);
-    for i in 0..output.len() {
-        println!("{}", &output[i].to_string());
+    let mut test = vec![1, 2, 4,
+                        3, 1, 2,
+                        5, 3, 1];
+    let matrix = Matrix {
+        data: test,
+        cols: 3,
+        rows: 3,
+    };
+    let transpose: Vec<u64> = matrix.transpose();
+    for i in 0 .. transpose.len() {
+        println!("{}", &transpose[i].to_string());
     }
-
 }
