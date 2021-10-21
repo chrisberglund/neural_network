@@ -24,6 +24,22 @@ impl<T: Clone> Matrix<T> {
         }
         transpose
     }
+
+    fn new(data: Vec<T>, rows: usize, cols: usize) -> Matrix<T> {
+        Matrix {
+            data,
+            rows,
+            cols,
+        }
+    }
+}
+
+impl<T> std::ops::Index<[usize; 2]> for Matrix<T> {
+    type Output = T;
+
+    fn index(&self, idx: [usize; 2]) -> &T {
+        &self.data[idx[0] * self.cols + idx[1]]
+    }
 }
 
 fn dot(a: &[f64], b: &[f64]) -> f64 {
@@ -74,13 +90,7 @@ fn main() {
     let mut test = vec![1, 2, 4,
                         3, 1, 2,
                         5, 3, 1];
-    let matrix = Matrix {
-        data: test,
-        cols: 3,
-        rows: 3,
-    };
+    let matrix = Matrix::new(test, 3,3);
     let transpose: Vec<u64> = matrix.transpose();
-    for i in 0 .. transpose.len() {
-        println!("{}", &transpose[i].to_string());
-    }
+    println!("{}", matrix[[1,2]].to_string());
 }
