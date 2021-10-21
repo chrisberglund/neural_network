@@ -10,19 +10,32 @@ pub struct Matrix<T> {
     rows: usize,
 }
 
+
 impl<T: Clone> Matrix<T> {
     fn cols(&self) -> usize { self.cols }
 
     fn rows(&self) -> usize { self.rows }
 
-    fn transpose(&self) -> Vec<T> {
+    fn len(&self) -> usize  {self.data.len()}
+
+    fn transpose(&self) -> Matrix<T> {
         let mut transpose: Vec<T> = Vec::new();
         for i in 0 .. self.cols{
             for j in 0 .. self.rows {
                 transpose.push(self.data[j * self.cols + i].clone());
             }
         }
-        transpose
+        Matrix::new(transpose, self.rows, self.cols)
+    }
+
+    fn slice(&self, rows: (usize, usize), cols: (usize, usize)) -> Matrix<T> {
+        let mut out: Vec<T> = Vec::new();
+        for i in rows.0 .. rows.1 {
+            for j in cols.0 .. cols.1 {
+                out.push(self.data[i * self.cols + j].clone());
+            }
+        }
+        Matrix::new(out, rows.1 - rows.0, cols.1 - cols.0)
     }
 
     fn new(data: Vec<T>, rows: usize, cols: usize) -> Matrix<T> {
@@ -91,6 +104,15 @@ fn main() {
                         3, 1, 2,
                         5, 3, 1];
     let matrix = Matrix::new(test, 3,3);
-    let transpose: Vec<u64> = matrix.transpose();
-    println!("{}", matrix[[1,2]].to_string());
+    let transpose: Matrix<u64> = matrix.transpose();
+    //let test2 = &matrix[[0..2, 0..2]];
+    let mut array: [std::ops::Range<usize>; 2] = [0..1, 0..1];
+    let slice = matrix.slice((0,2), (0,1));
+    for i in 0..slice.rows {
+        for j in 0 .. slice.cols {
+            print!(" {}", slice[[i,j]].to_string());
+        }
+        print!("\n");
+    }
+    //println!("{}", test2.to_string());
 }
