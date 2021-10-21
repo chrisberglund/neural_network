@@ -4,7 +4,7 @@ fn sigmoid(x: f64) -> f64 { 1. / (1. + ((-1. * x).exp())) }
 #[inline]
 fn sigmoid_prime(x: f64) -> f64 { sigmoid(x) * (1. - sigmoid(x)) }
 
-fn dot_product(a: &[f64], b: &[f64]) -> f64 {
+fn dot(a: &[f64], b: &[f64]) -> f64 {
     let mut product :f64 = 0.0;
     for i in 0..a.len() {
         product += a[i] * b[i];
@@ -18,7 +18,7 @@ fn multiply_matrix(a: &[f64], b: &[f64]) -> Vec<f64> {
     for i in 0..a.len()/b.len() {
         let start = i * b.len();
         let end = start + b.len();
-        product.push(dot_product(&a[start..end], &b));
+        product.push(dot(&a[start..end], &b));
     }
     product
 }
@@ -32,6 +32,14 @@ fn evaluate_layer(weights: &[f64], inputs: &[f64]) -> Vec<f64> {
     output
 }
 
+fn output_error(y:f64, a:&[f64], z: f64) -> Vec<f64> {
+    let mut error: Vec<f64> = Vec::new();
+    for i in 0..a.len() {
+        error.push((&a[i] - y) * sigmoid_prime(z));
+    }
+    error
+}
+
 fn loss_function(y: &[f64], sigma: &[f64]) -> f64 {
     let mut sum=0.0;
     for i in 0..sigma.len() {
@@ -43,7 +51,9 @@ fn loss_function(y: &[f64], sigma: &[f64]) -> f64 {
 fn main() {
     let weights = vec![0.5, 0.5, 0.5,0.3, 0.3, 0.3];
     let inputs = vec![0.5, 0.5, 0.5];
-    let output = evaluate_layer(&weights, &inputs);
+    let y = 0.25;
+    let z = 0.5;
+    let output = output_error(y, &inputs, z);
     for i in 0..output.len() {
         println!("{}", &output[i].to_string());
     }
