@@ -1,57 +1,20 @@
+pub mod matrix;
+
+pub use crate::matrix::Matrix;
+
 #[inline]
 fn sigmoid(x: f64) -> f64 { 1. / (1. + ((-1. * x).exp())) }
 
 #[inline]
 fn sigmoid_prime(x: f64) -> f64 { sigmoid(x) * (1. - sigmoid(x)) }
 
-pub struct Matrix<T> {
-    data: Vec<T>,
-    cols: usize,
-    rows: usize,
-}
+pub struct Scalar<T: Clone + std::ops::Mul>(T);
 
+impl<T: Clone + std::ops::Mul> std::ops::Deref for Scalar<T> {
+    type Target = T;
 
-impl<T: Clone> Matrix<T> {
-    fn cols(&self) -> usize { self.cols }
-
-    fn rows(&self) -> usize { self.rows }
-
-    fn len(&self) -> usize  {self.data.len()}
-
-    fn transpose(&self) -> Matrix<T> {
-        let mut transpose: Vec<T> = Vec::new();
-        for i in 0 .. self.cols{
-            for j in 0 .. self.rows {
-                transpose.push(self.data[j * self.cols + i].clone());
-            }
-        }
-        Matrix::new(transpose, self.rows, self.cols)
-    }
-
-    fn slice(&self, rows: (usize, usize), cols: (usize, usize)) -> Matrix<T> {
-        let mut out: Vec<T> = Vec::new();
-        for i in rows.0 .. rows.1 {
-            for j in cols.0 .. cols.1 {
-                out.push(self.data[i * self.cols + j].clone());
-            }
-        }
-        Matrix::new(out, rows.1 - rows.0, cols.1 - cols.0)
-    }
-
-    fn new(data: Vec<T>, rows: usize, cols: usize) -> Matrix<T> {
-        Matrix {
-            data,
-            rows,
-            cols,
-        }
-    }
-}
-
-impl<T> std::ops::Index<[usize; 2]> for Matrix<T> {
-    type Output = T;
-
-    fn index(&self, idx: [usize; 2]) -> &T {
-        &self.data[idx[0] * self.cols + idx[1]]
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 
@@ -83,6 +46,11 @@ fn evaluate_layer(weights: &[f64], inputs: &[f64]) -> Vec<f64> {
     output
 }
 
+// fn layer_error(weights: Matrix<f64>, next_error: &[f64], inputs: &[f64]) -> Vec<f64> {
+//     transposed_weights = weights.transpose();
+//
+// }
+
 fn output_error(y:f64, a:&[f64], z: f64) -> Vec<f64> {
     let mut error: Vec<f64> = Vec::new();
     for i in 0..a.len() {
@@ -108,11 +76,14 @@ fn main() {
     //let test2 = &matrix[[0..2, 0..2]];
     let mut array: [std::ops::Range<usize>; 2] = [0..1, 0..1];
     let slice = matrix.slice((0,2), (0,1));
-    for i in 0..slice.rows {
-        for j in 0 .. slice.cols {
-            print!(" {}", slice[[i,j]].to_string());
-        }
-        print!("\n");
-    }
+    let mulmatrix = matrix * 3;
+    // for i in 0..mulmatrix.rows {
+    //     for j in 0 .. mulmatrix.cols {
+    //         print!(" {}", mulmatrix[[i,j]].to_string());
+    //     }
+    //     print!("\n");
+    // }
     //println!("{}", test2.to_string());
+    let x = Scalar(3);
+    println!("{}", x.to_string());
 }
