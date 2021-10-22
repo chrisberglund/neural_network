@@ -1,12 +1,12 @@
 
 
 pub struct Matrix<T> {
-    data: Vec<T>,
+    pub data: Vec<T>,
     cols: usize,
     rows: usize,
 }
 
-impl<T: Clone + std::ops::Mul> Matrix<T> {
+impl<T: Copy + Clone + std::ops::Mul<Output = T>> Matrix<T> {
     pub fn cols(&self) -> usize { self.cols }
 
     pub fn rows(&self) -> usize { self.rows }
@@ -41,16 +41,39 @@ impl<T: Clone + std::ops::Mul> Matrix<T> {
         }
     }
 
-    // fn hadamard_product(a: &[T], b: &[T]) -> Vec<T> {
-    //     let mut out: Vec<T> = Vec::new();
-    //     for i in 0 .. a.len() {
-    //         out.push(a[i] * b[i]);
-    //     }
-    //     out
-    // }
+    fn hadamard_product(a: &[T], b: &[T]) -> Vec<T> {
+        let mut out: Vec<T> = Vec::new();
+        for i in 0 .. a.len() {
+            out.push(a[i] * b[i]);
+        }
+        out
+    }
 }
 
-impl<T: Copy + std::ops::Mul<Output = T>> std::ops::Mul<T> for Matrix<T> {
+
+    impl<T: Copy + std::ops::Mul<Output = T> + std::ops::Add<Output = T>> std::ops::Mul<Matrix<T>> for Matrix<T> {
+    type Output = Matrix<T>;
+
+    fn mul(self, rhs: Matrix<T>) -> Matrix<T> {
+        let mut out: Vec<T> = Vec::new();
+        for i in 0 .. self.rows {
+            for j in 0 .. rhs.cols {
+                let mut sum = self[[i, 0]] * rhs[[0, j]];
+                for k in 1 .. rhs.rows {
+                    sum = sum + self[[i, k]] * rhs[[k, j]];
+                }
+                out.push(sum);
+            }
+        }
+        Matrix {
+            data: out,
+            rows: self.rows(),
+            cols: rhs.cols(),
+        }
+    }
+}
+
+impl<T: Copy + std::ops::Mul<Output = T> + std::ops::Add<Output = T>> std::ops::Mul<T> for Matrix<T> {
     type Output = Matrix<T>;
 
     fn mul(self, rhs: T) -> Matrix<T> {

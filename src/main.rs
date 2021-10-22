@@ -48,7 +48,7 @@ fn evaluate_layer(weights: &[f64], inputs: &[f64]) -> Vec<f64> {
 
 // fn layer_error(weights: Matrix<f64>, next_error: &[f64], inputs: &[f64]) -> Vec<f64> {
 //     transposed_weights = weights.transpose();
-//
+//     transposed_weights *
 // }
 
 fn output_error(y:f64, a:&[f64], z: f64) -> Vec<f64> {
@@ -68,22 +68,20 @@ fn loss_function(y: &[f64], sigma: &[f64]) -> f64 {
 }
 
 fn main() {
-    let mut test = vec![1, 2, 4,
-                        3, 1, 2,
-                        5, 3, 1];
-    let matrix = Matrix::new(test, 3,3);
-    let transpose: Matrix<u64> = matrix.transpose();
-    //let test2 = &matrix[[0..2, 0..2]];
-    let mut array: [std::ops::Range<usize>; 2] = [0..1, 0..1];
-    let slice = matrix.slice((0,2), (0,1));
-    let mulmatrix = matrix * 3;
-    // for i in 0..mulmatrix.rows {
-    //     for j in 0 .. mulmatrix.cols {
-    //         print!(" {}", mulmatrix[[i,j]].to_string());
-    //     }
-    //     print!("\n");
-    // }
+    let mut test = vec![1, 2, 3,
+                        4, 5, 6];
+    let matrix = Matrix::new(test, 2,3);
+    let mut test2 = vec![7, 8,
+                         9, 10,
+                         11, 12];
+    let matrix2 = Matrix::new(test2, 3,2);
+
+    let mulmatrix = matrix * matrix2;
+    for i in 0..mulmatrix.rows() {
+        for j in 0..mulmatrix.cols() {
+            print!(" {}", mulmatrix[[i,j]].to_string());
+        }
+        print!("\n");
+    }
     //println!("{}", test2.to_string());
-    let x = Scalar(3);
-    println!("{}", x.to_string());
 }
